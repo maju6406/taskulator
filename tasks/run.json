@@ -1,0 +1,19 @@
+{
+    "puppet_task_version": 1,
+    "supports_noop": false,
+    "description": "A short description of this task",
+    "parameters": {
+        "module_name": {
+            "description": "module you want to run.",
+            "type": "String[1]"
+        },
+        "execution_code": {
+            "description": "code you want to execute.",
+            "type": "String[1]"
+        },
+        "postinstall_cleanup": {
+            "description": "clean up module post execution?",
+            "type": "Enum[yes, no]"
+        }
+    }
+}
