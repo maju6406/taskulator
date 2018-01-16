@@ -7,7 +7,11 @@
             "description": "module you want to run.",
             "type": "String[1]"
         },
-        "execution_code": {
+        "module_version": {
+            "description": "version of the module.",
+            "type": "Optional[String[1]]"
+        },
+        "module_execution_code": {
             "description": "code you want to execute.",
             "type": "String[1]"
         },
