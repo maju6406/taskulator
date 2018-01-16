@@ -4,7 +4,7 @@ echo module_version:        $PT_module_version
 echo module_execution_code: $PT_module_execution_code
 
 puppet module install $PT_module_name
-echo $puppet_command >/tmp/taskulator.pp 
+echo $PT_module_execution_code >/tmp/taskulator.pp 
 puppet apply /tmp/taskulator.pp &>/tmp/taskulator.log
 
 if [ "$PT_postinstall_cleanup" == "yes" ]; then
