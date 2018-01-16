@@ -7,14 +7,16 @@ if [ "$PT_postinstall_cleanup" == "" || ["$PT_postinstall_cleanup" == "yes" ]; t
 fi
 
 for module_name in $PT_module_names; do
-  puppet module install module_name
+  echo installed $module_name 
+  puppet module install $module_name
 done 
 
 echo $PT_puppet_code >/tmp/taskulator.pp 
 puppet apply /tmp/taskulator.pp &>/tmp/taskulator.log
 
-if [ "$uninstall_flag" = true ]; then
+if [ "$uninstall_flag" == true ]; then
+  echo Uninstalled modules
   for module_name in $PT_module_names; do
-    puppet module uninstall module_name
+    puppet module uninstall $module_name
   done 
 fi
