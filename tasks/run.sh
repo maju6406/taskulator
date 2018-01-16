@@ -16,7 +16,7 @@ done
 echo $PT_puppet_code >/tmp/taskulator.pp 
 puppet apply /tmp/taskulator.pp &>/tmp/taskulator.log
 
-if [ "$module_postinstall" == true ]; then
+if [ "$PT_postinstall_cleanup" == true ]; then
   echo Uninstalled modules
   for module_name in "${name_array[@]}"
   do
