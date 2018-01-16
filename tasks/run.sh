@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-echo module_names:       $PT_module_names
+echo names:       $PT_module_names
 echo puppet_code:        $PT_puppet_code
 echo module_postinstall: $PT_postinstall_cleanup
 
-if [ "$PT_postinstall_cleanup" == "" || ["$PT_postinstall_cleanup" == "yes" ]; then
+if [ "$PT_postinstall_cleanup" == ""] || ["$PT_postinstall_cleanup" == "yes" ]; then
   echo Uninstall: $PT_postinstall_cleanup
   uninstall_flag = true
 fi
