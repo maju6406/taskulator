@@ -10,9 +10,6 @@ def exec(command)
     exit_code = w.value.exitstatus
     [out, exit_code]
   end
-
-#  puts "output:#{output}"
-#  puts "exit  :#{exit_code}"
   
   File.open("#{Dir.tmpdir()}#{File::SEPARATOR}taskulator.log", 'a') { |file| file.write("#{output}") }
   
@@ -45,7 +42,7 @@ begin
   puts "names:               #{module_names}"
   puts "puppet_code:         #{puppet_code}"
   puts "postinstall_cleanup: #{postinstall_cleanup}"
-  puts "log dir: #{Dir.tmpdir()}"
+  puts "log file:            #{Dir.tmpdir()}#{File::SEPARATOR}taskulator.log"
   module_names.each do |module_name|
     begin
       install_module(module_name)
