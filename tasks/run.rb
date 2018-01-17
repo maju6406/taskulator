@@ -2,7 +2,6 @@
 
 require 'json'
 require 'open3'
-require 'tmpdir'
 
 def exec(command)
   output, exit_code  = Open3.popen2({}, command, {:err => [:child, :out]}) do  |i, o, w|
@@ -11,9 +10,6 @@ def exec(command)
     [out, exit_code]
   end
 
-  puts "command #{command}"
-  puts "exit code #{exit_code}"
-  puts "output #{output}"  
   { _output: output,
     exit_code: exit_code
   }
@@ -30,8 +26,8 @@ end
 
 def puppet_apply(code)
   File.open("/tmp/taskulator.pp", 'w') { |file| file.write("#{code}") }  
-  result = exec("puppet apply /tmp/taskulator.pp &>/tmp/taskulator.log")
-  puts "Puppet code executed. Debug output can be found in #{temp}#{File::SEPARATOR}"
+  exec("puppet apply /tmp/taskulator.pp &>/tmp/taskulator.log")
+  puts "Puppet code executed"
 end
 
 params = JSON.parse(STDIN.read)
