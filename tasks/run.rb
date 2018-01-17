@@ -5,17 +5,14 @@ require 'open3'
 require 'tmpdir'
 
 def exec(command)
-  Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
-    while line = stdout_err.gets
-#      puts line
-    end
-
-    output = stdout_err
-    exit_code = wait_thr.value
+  output, exit_code  = Open3.popen2({}, command, {:err => [:child, :out]}) do  |i, o, w|
+    out = o.read()
+    exit_code = w.value.exitstatus
+    [out, exit_code]
   end
 
-  puts "output:#{output}"
-  puts "exit  :#{exit_code}"
+#  puts "output:#{output}"
+#  puts "exit  :#{exit_code}"
   
   File.open("#{Dir.tmpdir()}#{File::SEPARATOR}taskulator.log", 'a') { |file| file.write("#{output}") }
   
