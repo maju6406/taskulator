@@ -15,8 +15,8 @@ def exec(command)
   }
 end
 
-def install_module(module)
-    puts "module name: #{module}"
+def install_module(mod)
+    puts "module name: #{mod}"
 end
 
 def puppet_apply(code)
@@ -24,27 +24,24 @@ def puppet_apply(code)
 end
 
 params = JSON.parse(STDIN.read)
-module_names = params['module_names']
+#module_names = params['module_names']
 puppet_code = params['puppet_code']
 postinstall_cleanup = params['postinstall_cleanup']
 failonfail = true
 
-params['module_names'].each do |module_name|
-  begin
-    install_module(module_name)
-  rescue
-    puts "couldn't update file #{module_name}"
-  end
-end
-
-puppet_apply(puppet_code)
-
-puts "postinstall_cleanup: #{postinstall_cleanup}"
-
 begin
-#  result = exec(command)
+  params['module_names'].each do |module_name|
+    begin
+      install_module(module_name)
+    rescue
+      puts "couldn't update file #{module_name}"
+    end
+  end
+  puppet_apply(puppet_code)
+  puts "postinstall_cleanup: #{postinstall_cleanup}"
+  result = exec(command)
   puts result.to_json
-
+  
   if failonfail
     exit result[:exit_code]
   else
