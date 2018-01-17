@@ -13,24 +13,26 @@ def exec(command)
 
   puts "output:#{output}"
   puts "exit  :#{exit_code}"
-
+  
+  File.open("#{Dir.tmpdir()}#{File::SEPARATOR}taskulator.log", 'a') { |file| file.write("#{output}") }
+  
   { _output: output,
     exit_code: exit_code
   }
 end
 
 def install_module(mod)
-  exec("puppet module install #{mod} >>#{Dir.tmpdir()}#{File::SEPARATOR}taskulator_install.log")
+  exec("puppet module install #{mod}")
   puts "#{mod} installed"
 end
 
 def uninstall_module(mod)
-  exec("puppet module uninstall #{mod} >>#{Dir.tmpdir() }#{File::SEPARATOR}taskulator_uninstall.log")
+  exec("puppet module uninstall #{mod}")
 end
 
 def puppet_apply(code)
   File.open("#{Dir.tmpdir()}#{File::SEPARATOR}taskulator.pp", 'w') { |file| file.write("#{code}") }  
-  exec("puppet apply #{Dir.tmpdir()}#{File::SEPARATOR}taskulator.pp >#{Dir.tmpdir()}#{File::SEPARATOR}taskulator.log")
+  exec("puppet apply #{Dir.tmpdir()}#{File::SEPARATOR}taskulator.pp")
   puts "Puppet code executed"
 end
 
