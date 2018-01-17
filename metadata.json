@@ -4,7 +4,9 @@
     "author": "Abir Majumdar",
     "summary": "Experimental task installs modules and executes arbitrary puppet code",
     "license": "Apache-2.0",
-    "source": "",
+    "source": "https://github.com/maju6406/taskulator",
+    "project_page": "https://github.com/maju6406/taskulator",
+    "issues_url": "https://github.com/maju6406/taskulator/issues",
     "dependencies": [
 
     ],
