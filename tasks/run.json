@@ -13,7 +13,7 @@
         },
         "postinstall_cleanup": {
             "description": "clean up module post execution?",
-            "type": "Optional[Boolean]"
+            "type": "Optional[Enum[yes, no]]"
         }
     }
 }
