@@ -5,10 +5,13 @@ require 'open3'
 require 'tmpdir'
 
 def exec(command)
-  output, exit_code  = Open3.popen2({}, command, {:err => [:child, :out]}) do  |i, o, w|
-    out = o.read()
-    exit_code = w.value.exitstatus
-    [out, exit_code]
+  Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
+    while line = stdout_err.gets
+#      puts line
+    end
+
+    output = stdout_err
+    exit_code = wait_thr.value
   end
 
   puts "output:#{output}"
