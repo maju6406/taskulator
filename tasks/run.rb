@@ -27,6 +27,7 @@ end
 def puppet_apply(code)
   File.open("/tmp/taskulator.pp", 'w') { |file| file.write("#{code}") }  
   exec("puppet apply /tmp/taskulator.pp &>/tmp/taskulator.log")
+  puts "Puppet code executed"
 end
 
 params = JSON.parse(STDIN.read)
