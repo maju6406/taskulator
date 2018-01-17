@@ -2,6 +2,7 @@
 
 require 'json'
 require 'open3'
+require 'tmpdir'
 
 def exec(command)
   output, exit_code  = Open3.popen2({}, command, {:err => [:child, :out]}) do  |i, o, w|
@@ -16,17 +17,17 @@ def exec(command)
 end
 
 def install_module(mod)
-  exec("puppet module install #{mod} &>>/tmp/taskulator_install.log")
+  exec("puppet module install #{mod} &>>#{Dir.tmpdir()}#{File::SEPARATOR}taskulator_install.log")
   puts "#{mod} installed"
 end
 
 def uninstall_module(mod)
-  exec("puppet module uninstall #{mod} &>>/tmp/taskulator_uninstall.log")
+  exec("puppet module uninstall #{mod} &>>#{Dir.tmpdir() }#{File::SEPARATOR}taskulator_uninstall.log")
 end
 
 def puppet_apply(code)
-  File.open("/tmp/taskulator.pp", 'w') { |file| file.write("#{code}") }  
-  exec("puppet apply /tmp/taskulator.pp &>/tmp/taskulator.log")
+  File.open("#{Dir.tmpdir()}#{File::SEPARATOR}taskulator.pp", 'w') { |file| file.write("#{code}") }  
+  exec("puppet apply #{Dir.tmpdir()}#{File::SEPARATOR}taskulator.pp &>#{Dir.tmpdir()}#{File::SEPARATOR}taskulator.log")
   puts "Puppet code executed"
 end
 
