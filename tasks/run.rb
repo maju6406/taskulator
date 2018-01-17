@@ -20,17 +20,17 @@ def exec(command)
 end
 
 def install_module(mod)
-  exec("puppet module install #{mod} &>>#{Dir.tmpdir() }#{File::SEPARATOR}taskulator_install.log")
+  exec("puppet module install #{mod} &>>/tmp/taskulator_install.log")
   puts "#{mod} installed"
 end
 
 def uninstall_module(mod)
-  exec("puppet module uninstall #{mod} &>>#{Dir.tmpdir() }#{File::SEPARATOR}taskulator_uninstall.log")
+  exec("puppet module uninstall #{mod} &>>/tmp/taskulator_uninstall.log")
 end
 
 def puppet_apply(code)
   File.open("/tmp/taskulator.pp", 'w') { |file| file.write("#{code}") }  
-  result = exec("puppet apply /tmp/taskulator.pp &>#{Dir.tmpdir() }#{File::SEPARATOR}taskulator.log")
+  result = exec("puppet apply /tmp/taskulator.pp &>/tmp/taskulator.log")
   puts "Puppet code executed. Debug output can be found in #{temp}#{File::SEPARATOR}"
 end
 
@@ -43,8 +43,6 @@ begin
   puts "names:               #{module_names}"
   puts "puppet_code:         #{puppet_code}"
   puts "postinstall_cleanup: #{postinstall_cleanup}"
-
-  puts "pwd: #{Dir.pwd}"
 
   module_names.each do |module_name|
     begin
