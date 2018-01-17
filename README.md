@@ -37,3 +37,10 @@ To view the available actions and parameters, on the command line, run `puppet t
 To display help for the taskulator task, run `puppet task show taskulator::run`
 
 To show help for the task CLI, run `puppet task run --help` or `bolt task run --help`
+
+## Limitations
+This modules has been tested on Centos and Windows 2012r2 machines. It may work on other platforms but is untested,
+
+## Release Notes/Contributors/Etc.
+0.2.0 - Added support for Windows
+0.1.0 - Initial Release
