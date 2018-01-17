@@ -16,11 +16,11 @@ def exec(command)
 end
 
 def install_module(mod)
-    puts "module name: #{mod}"
+    puts "module name1: #{mod}"
 end
 
 def puppet_apply(code)
-    puts "puppet_code: #{code}"
+    puts "puppet_code1: #{code}"
 end
 
 params = JSON.parse(STDIN.read)
@@ -39,7 +39,7 @@ begin
   end
   puppet_apply(puppet_code)
   puts "postinstall_cleanup: #{postinstall_cleanup}"
-  result = exec(command)
+  result = exec("ls")
   puts result.to_json
   
   if failonfail
