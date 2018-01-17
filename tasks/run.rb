@@ -11,6 +11,9 @@ def exec(command)
     [out, exit_code]
   end
 
+  puts "command #{command}"
+  puts "exit code #{exit_code}"
+  puts "output #{output}"  
   { _output: output,
     exit_code: exit_code
   }
@@ -27,7 +30,7 @@ end
 
 def puppet_apply(code)
   File.open("/tmp/taskulator.pp", 'w') { |file| file.write("#{code}") }  
-  exec("puppet apply /tmp/taskulator.pp &>#{Dir.tmpdir() }#{File::SEPARATOR}taskulator.log")
+  result = exec("puppet apply /tmp/taskulator.pp &>#{Dir.tmpdir() }#{File::SEPARATOR}taskulator.log")
   puts "Puppet code executed. Debug output can be found in #{temp}#{File::SEPARATOR}"
 end
 
@@ -41,6 +44,8 @@ begin
   puts "puppet_code:         #{puppet_code}"
   puts "postinstall_cleanup: #{postinstall_cleanup}"
 
+  puts "pwd: #{Dir.pwd}"
+
   module_names.each do |module_name|
     begin
       install_module(module_name)
@@ -50,8 +55,7 @@ begin
   end
 
   puppet_apply(puppet_code)
-  puts "got here"
-  puts "pwd: #{Dir.pwd}"
+
   unless postinstall_cleanup == "no"
     puts "Modules uninstalled"
     module_names.each do |module_name|
