@@ -9,19 +9,18 @@ array_string=${array_string//\"}
 IFS=',' read -a name_array <<< "${array_string}"
 for module_name in "${name_array[@]}"
 do
-  echo installed $module_name 
+  echo $module_name installed
   puppet module install $module_name &>>/tmp/taskulator_install.log
 done
 
 echo $PT_puppet_code >/tmp/taskulator.pp 
 puppet apply /tmp/taskulator.pp &>/tmp/taskulator.log
-
+echo Puppet code executed
 
 if [ "$PT_postinstall_cleanup" == "yes" ] || [ "$PT_postinstall_cleanup" == "" ]; then
-  echo Uninstalled modules
+  echo Modules uninstalled
   for module_name in "${name_array[@]}"
   do
-    echo installed $module_name 
     puppet module uninstall $module_name &>>/tmp/taskulator_uninstall.log
   done
 fi
