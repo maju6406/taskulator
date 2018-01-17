@@ -16,44 +16,46 @@ def exec(command)
 end
 
 def install_module(mod)
-  result = exec("puppet module install #{mod} &>>/tmp/taskulator_install.log")
-  puts "install module name: #{mod}"
-  puts result.to_json
+  exec("puppet module install #{mod} &>>/tmp/taskulator_install.log")
+  puts "#{mod} installed"
 end
 
 def uninstall_module(mod)
-  result = exec("puppet module uninstall #{mod} &>>/tmp/taskulator_uninstall.log")
-  puts "uninstall module name: #{mod}"
-  puts result.to_json
+  exec("puppet module uninstall #{mod} &>>/tmp/taskulator_uninstall.log")
 end
 
 def puppet_apply(code)
   File.open("/tmp/taskulator.pp", 'w') { |file| file.write("#{code}") }  
-  result = exec("puppet apply /tmp/taskulator.pp &>/tmp/taskulator.log")
-  puts "puppet_code: #{code}"
-  puts result.to_json
+  exec("puppet apply /tmp/taskulator.pp &>/tmp/taskulator.log")
 end
 
 params = JSON.parse(STDIN.read)
 puppet_code = params['puppet_code']
 postinstall_cleanup = params['postinstall_cleanup']
+module_names = params['module_names']
 
 begin
-  params['module_names'].each do |module_name|
+  puts "names:               #{module_names}"
+  puts "puppet_code:         #{puppet_code}"
+  puts "postinstall_cleanup: #{postinstall_cleanup}"
+
+  module_names.each do |module_name|
     begin
       install_module(module_name)
     rescue
-      puts "couldn't update file #{module_name}"
+      puts "couldn't install #{module_name}"
     end
   end
+
   puppet_apply(puppet_code)
-  puts "postinstall_cleanup: #{postinstall_cleanup}"
+
   unless postinstall_cleanup == "no"
-    params['module_names'].each do |module_name|
+    puts "Modules uninstalled"
+    module_names.each do |module_name|
       begin
         uninstall_module(module_name)
       rescue
-        puts "couldn't update file #{module_name}"
+        puts "couldn't uninstall #{module_name}"
       end  
     end
   end
