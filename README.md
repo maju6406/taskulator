@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/maju6406/taskulator.svg?branch=master)](https://travis-ci.org/maju6406/taskulator)
+
 # taskulator
 
 #### Table of Contents
