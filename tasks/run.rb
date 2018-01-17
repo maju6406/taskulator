@@ -50,7 +50,8 @@ begin
   end
 
   puppet_apply(puppet_code)
-
+  puts "got here"
+  puts "pwd: #{Dir.pwd}"
   unless postinstall_cleanup == "no"
     puts "Modules uninstalled"
     module_names.each do |module_name|
