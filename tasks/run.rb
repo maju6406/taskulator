@@ -22,7 +22,7 @@ def install_module(mod)
 end
 
 def uninstall_module(mod)
-  result = exec("puppet module install #{mod} &>>/tmp/taskulator_install.log")
+  result = exec("puppet module uninstall #{mod} &>>/tmp/taskulator_uninstall.log")
   puts "uninstall module name: #{mod}"
   puts result.to_json
 end
