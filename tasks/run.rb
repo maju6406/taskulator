@@ -40,7 +40,7 @@ begin
   puts "names:               #{module_names}"
   puts "puppet_code:         #{puppet_code}"
   puts "postinstall_cleanup: #{postinstall_cleanup}"
-
+  puts "log dir: #{Dir.tmpdir()}"
   module_names.each do |module_name|
     begin
       install_module(module_name)
