@@ -48,7 +48,6 @@ puppet_code_url = params['puppet_code_url']
 
 begin
   puts "names:               #{module_names}"
-  puts "puppet_code:         #{puppet_code}"
   puts "postinstall_cleanup: #{postinstall_cleanup}"
   puts "log file:            #{Dir.tmpdir()}#{File::SEPARATOR}taskulator.log"
   puts "puppet_code_url:     #{puppet_code_url}"  
@@ -63,10 +62,11 @@ begin
 
   if !puppet_code_url.empty?
     download(puppet_code_url, "#{Dir.tmpdir()}#{File::SEPARATOR}temp.pp")
-    f = File.open("temp.pp", "rb")
+    f = File.open("#{Dir.tmpdir()}#{File::SEPARATOR}temp.pp", "rb")
     puppet_code = f.read
   end
 
+  puts "puppet_code:         #{puppet_code}"
   puppet_apply(puppet_code)
 
   unless postinstall_cleanup == "no"
