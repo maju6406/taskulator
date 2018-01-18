@@ -46,15 +46,15 @@ module_names = params['module_names']
 puppet_code_url = params['puppet_code_url']
 
 begin
+  if puppet_code_url.to_s.empty? && puppet_code.to_s.empty?
+    puts 'You must specify either puppet_code_url OR puppet_code parameter for this task to function. Try again.'
+    exit 1
+  end
+
   puts "names:               #{module_names}"
   puts "postinstall_cleanup: #{postinstall_cleanup}"
   puts "log file:            #{Dir.tmpdir}#{File::SEPARATOR}taskulator.log"
   puts "puppet_code_url:     #{puppet_code_url}"
-
-  if puppet_code_url.to_s.empty? && puppet_code.to_s.empty?
-    puts 'You must specify either puppet_code_url OR puppet_code for this task to function.'
-    exit 1
-  end
 
   module_names.each do |module_name|
     begin
