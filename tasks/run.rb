@@ -51,6 +51,11 @@ begin
   puts "log file:            #{Dir.tmpdir}#{File::SEPARATOR}taskulator.log"
   puts "puppet_code_url:     #{puppet_code_url}"
 
+  if puppet_code_url.to_s.empty? && puppet_code.to_s.empty?
+    puts 'You must specify either puppet_code_url OR puppet_code for this task to function.'
+    exit 1
+  end
+
   module_names.each do |module_name|
     begin
       install_module(module_name)
