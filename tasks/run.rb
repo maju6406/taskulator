@@ -44,6 +44,7 @@ params = JSON.parse(STDIN.read)
 puppet_code = params['puppet_code']
 postinstall_cleanup = params['postinstall_cleanup']
 module_names = params['module_names']
+puppet_code_url = params['puppet_code_url']
 
 begin
   puts "names:               #{module_names}"

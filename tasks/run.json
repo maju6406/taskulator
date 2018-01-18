@@ -9,7 +9,7 @@
         },
         "puppet_code": {
             "description": "code you want to execute.",
-            "type": "String[1]"
+            "type": "Optional[String[1]]"
         },
         "puppet_code_url": {
             "description": "url to code that you want to execute(takes precedence over puppet_code)",
