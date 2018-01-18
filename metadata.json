@@ -1,6 +1,6 @@
 {
     "name": "beersy-taskulator",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "author": "Abir Majumdar",
     "summary": "Experimental task installs modules and executes arbitrary puppet code",
     "license": "Apache-2.0",

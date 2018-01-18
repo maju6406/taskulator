@@ -25,8 +25,9 @@ This module is compatible with Puppet Enterprise and Puppet Bolt.
 
 There are 3 parameters:
 * module_names : modules you want to run. Ex \["puppetlabs-ntp","puppetlabs-motd"\]
-* puppet_code : code you want to execute.
 * postinstall_cleanup (Optional) : uninstall modules post execution
+* puppet_code (Optional) : code you want to execute.
+* puppet\_code\_url (Optional) : url to code that you want to execute (takes precedence over puppet_code)
 
 ## Reference
 
@@ -42,5 +43,6 @@ To show help for the task CLI, run `puppet task run --help` or `bolt task run --
 This modules has been tested on Centos and Windows 2012r2 machines. It may work on other platforms but is untested,
 
 ## Release Notes/Contributors/Etc.
-0.2.0 - Added support for Windows
+0.3.0 - Added support for url for remote puppet files  
+0.2.0 - Added support for Windows  
 0.1.0 - Initial Release

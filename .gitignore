@@ -21,3 +21,4 @@
 /vendor/
 /convert_report.txt
 
+.vscode/settings.json
