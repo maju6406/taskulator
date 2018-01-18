@@ -11,6 +11,10 @@
             "description": "code you want to execute.",
             "type": "String[1]"
         },
+        "puppet_code_url": {
+            "description": "url to code that you want to execute(takes precedence over puppet_code)",
+            "type": "Optional[String[1]]"
+        },
         "postinstall_cleanup": {
             "description": "clean up module post execution?",
             "type": "Optional[Enum[yes, no]]"

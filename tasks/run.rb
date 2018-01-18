@@ -3,6 +3,13 @@
 require 'json'
 require 'open3'
 require 'tmpdir'
+require "open-uri"
+
+def download(url, path)
+  File.open(path, "w") do |f|
+    IO.copy_stream(open(url), f)
+  end
+end
 
 def exec(command)
   output, exit_code  = Open3.popen2({}, command, {:err => [:child, :out]}) do  |i, o, w|
@@ -43,12 +50,20 @@ begin
   puts "puppet_code:         #{puppet_code}"
   puts "postinstall_cleanup: #{postinstall_cleanup}"
   puts "log file:            #{Dir.tmpdir()}#{File::SEPARATOR}taskulator.log"
+  puts "puppet_code_url:     #{puppet_code_url}"  
+
   module_names.each do |module_name|
     begin
       install_module(module_name)
     rescue
       puts "couldn't install #{module_name}"
     end
+  end
+
+  if !puppet_code_url.empty?
+    download(puppet_code_url, "#{Dir.tmpdir()}#{File::SEPARATOR}temp.pp")
+    f = File.open("temp.pp", "rb")
+    puppet_code = f.read
   end
 
   puppet_apply(puppet_code)
