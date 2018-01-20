@@ -36,41 +36,42 @@ end
 def install_puppet_linux
   os = linux_variant
   agent_version = '5.3.2'
+  unless File.exist?('/opt/puppetlabs/puppet/bin/ruby')
+    if os[:family] == 'RedHat'
+      os_version = os[:major_version]
+      cmd = <<-CMD
+              rpm -Uvh https://yum.puppet.com/puppet5/puppet5-release-el-#{os_version}.noarch.rpm && \
+              yum upgrade -y && \
+              yum update -y && \
+              yum install -y puppet-agent-#{agent_version} && \
+              mkdir -p /etc/puppetlabs/facter/facts.d/ && \
+              yum clean all
+            CMD
+    else
+      os_codename = os[:codename]
+      cmd = <<-CMD
+              apt-get update && \
+              apt-get install --no-install-recommends -y lsb-release wget ca-certificates && \
+              wget https://apt.puppetlabs.com/puppet5-release-#{os_codename}.deb && \
+              dpkg -i puppet5-release-#{os_codename}.deb  && \
+              rm puppet5-release-#{os_codename}.deb  && \
+              apt-get update && \
+              apt-get install --no-install-recommends -y puppet-agent="#{agent_version}"-1"#{os_codename}" && \
+              apt-get remove --purge -y wget && \
+              apt-get autoremove -y && \
+              apt-get clean && \
+              mkdir -p /etc/puppetlabs/facter/facts.d/ && \
+              rm -rf /var/lib/apt/lists/*
+            CMD
+    end
 
-  if os[:family] == 'RedHat'
-    os_version = os[:major_version]
-    cmd = <<-CMD
-            rpm -Uvh https://yum.puppet.com/puppet5/puppet5-release-el-#{os_version}.noarch.rpm && \
-            yum upgrade -y && \
-            yum update -y && \
-            yum install -y puppet-agent-#{agent_version} && \
-            mkdir -p /etc/puppetlabs/facter/facts.d/ && \
-            yum clean all
-          CMD
-  else
-    os_codename = os[:codename]
-    cmd = <<-CMD
-            apt-get update && \
-            apt-get install --no-install-recommends -y lsb-release wget ca-certificates && \
-            wget https://apt.puppetlabs.com/puppet5-release-#{os_codename}.deb && \
-            dpkg -i puppet5-release-#{os_codename}.deb  && \
-            rm puppet5-release-#{os_codename}.deb  && \
-            apt-get update && \
-            apt-get install --no-install-recommends -y puppet-agent="#{agent_version}"-1"#{os_codename}" && \
-            apt-get remove --purge -y wget && \
-            apt-get autoremove -y && \
-            apt-get clean && \
-            mkdir -p /etc/puppetlabs/facter/facts.d/ && \
-            rm -rf /var/lib/apt/lists/*
-          CMD
+    if cmd.nil?
+      puts 'Could not install puppet. Exiting'
+      exit 2
+    end
+
+    exec(cmd)
   end
-
-  if cmd.nil?
-    puts 'Could not install puppet. Exiting'
-    exit 2
-  end
-
-  exec(cmd)
 end
 
 def uninstall_puppet_linux
