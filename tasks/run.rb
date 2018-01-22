@@ -67,7 +67,7 @@ def install_masterless_puppet_linux
 
   if cmd.nil?
     puts 'Could not install puppet. Exiting'
-    exit 2
+    exit 3
   end
 
   exec(cmd)
