@@ -1,4 +1,4 @@
-#!/opt/puppetlabs/puppet/bin/ruby
+#!/usr/bin/ruby
 
 require 'json'
 require 'open3'
@@ -33,48 +33,47 @@ def uninstall_module(mod)
   exec("/opt/puppetlabs/bin/puppet module uninstall #{mod}")
 end
 
-def install_puppet_linux
+def install_masterless_puppet_linux
   os = linux_variant
   agent_version = '5.3.2'
-  unless File.exist?('/opt/puppetlabs/puppet/bin/ruby')
-    if os[:family] == 'RedHat'
-      os_version = os[:major_version]
-      cmd = <<-CMD
-              rpm -Uvh https://yum.puppet.com/puppet5/puppet5-release-el-#{os_version}.noarch.rpm && \
-              yum upgrade -y && \
-              yum update -y && \
-              yum install -y puppet-agent-#{agent_version} && \
-              mkdir -p /etc/puppetlabs/facter/facts.d/ && \
-              yum clean all
-            CMD
-    else
-      os_codename = os[:codename]
-      cmd = <<-CMD
-              apt-get update && \
-              apt-get install --no-install-recommends -y lsb-release wget ca-certificates && \
-              wget https://apt.puppetlabs.com/puppet5-release-#{os_codename}.deb && \
-              dpkg -i puppet5-release-#{os_codename}.deb  && \
-              rm puppet5-release-#{os_codename}.deb  && \
-              apt-get update && \
-              apt-get install --no-install-recommends -y puppet-agent="#{agent_version}"-1"#{os_codename}" && \
-              apt-get remove --purge -y wget && \
-              apt-get autoremove -y && \
-              apt-get clean && \
-              mkdir -p /etc/puppetlabs/facter/facts.d/ && \
-              rm -rf /var/lib/apt/lists/*
-            CMD
-    end
-
-    if cmd.nil?
-      puts 'Could not install puppet. Exiting'
-      exit 2
-    end
-
-    exec(cmd)
+  return if File.exist?('/opt/puppetlabs/puppet/bin/puppet')
+  if os[:family] == 'RedHat'
+    os_version = os[:major_version]
+    cmd = <<-CMD
+            rpm -Uvh https://yum.puppet.com/puppet5/puppet5-release-el-#{os_version}.noarch.rpm && \
+            yum upgrade -y && \
+            yum update -y && \
+            yum install -y puppet-agent-#{agent_version} && \
+            mkdir -p /etc/puppetlabs/facter/facts.d/ && \
+            yum clean all
+          CMD
+  else
+    os_codename = os[:codename]
+    cmd = <<-CMD
+            apt-get update && \
+            apt-get install --no-install-recommends -y lsb-release wget ca-certificates && \
+            wget https://apt.puppetlabs.com/puppet5-release-#{os_codename}.deb && \
+            dpkg -i puppet5-release-#{os_codename}.deb  && \
+            rm puppet5-release-#{os_codename}.deb  && \
+            apt-get update && \
+            apt-get install --no-install-recommends -y puppet-agent="#{agent_version}"-1"#{os_codename}" && \
+            apt-get remove --purge -y wget && \
+            apt-get autoremove -y && \
+            apt-get clean && \
+            mkdir -p /etc/puppetlabs/facter/facts.d/ && \
+            rm -rf /var/lib/apt/lists/*
+          CMD
   end
+
+  if cmd.nil?
+    puts 'Could not install puppet. Exiting'
+    exit 2
+  end
+
+  exec(cmd)
 end
 
-def uninstall_puppet_linux
+def uninstall_masterless_puppet_linux
   os = linux_variant
   agent_version = '5.3.2'
   if os[:family] == 'RedHat'
@@ -86,7 +85,7 @@ def uninstall_puppet_linux
   exec(cmd)
 end
 
-def install_puppet_windows
+def install_masterless_puppet_windows
   agent_version = '5.3.2'
   ps = <<-PS
         $MsiUrl = "https://downloads.puppetlabs.com/windows/puppet/puppet-agent-#{agent_version}-x64.msi"
@@ -125,7 +124,7 @@ def install_puppet_windows
   exec("powershell.exe #{Dir.tmpdir}#{File::SEPARATOR}install_agent.ps1")
 end
 
-def uninstall_puppet_windows
+def uninstall_masterless_puppet_windows
   exec('MsiExec.exe /X{68FA13E5-9935-48F5-96F4-20FCAC8FE304}')
 end
 
@@ -167,7 +166,7 @@ puppet_code = params['puppet_code']
 postinstall_cleanup = params['postinstall_cleanup']
 module_names = params['module_names']
 puppet_code_url = params['puppet_code_url']
-install_puppet = params['install_puppet']
+install_masterless_puppet = params['install_masterless_puppet']
 
 begin
   if puppet_code_url.to_s.empty? && puppet_code.to_s.empty?
@@ -179,13 +178,13 @@ begin
   puts "postinstall_cleanup: #{postinstall_cleanup}"
   puts "log file:            #{Dir.tmpdir}#{File::SEPARATOR}taskulator.log"
   puts "puppet_code_url:     #{puppet_code_url}"
-  puts "install_puppet:      #{install_puppet}"
+  puts "install_masterless_puppet:      #{install_masterless_puppet}"
 
-  unless install_puppet == 'no'
+  unless install_masterless_puppet == 'no'
     if Gem.win_platform?
-      install_puppet_windows
+      install_masterless_puppet_windows
     else
-      install_puppet_linux
+      install_masterless_puppet_linux
     end
   end
 
@@ -217,9 +216,9 @@ begin
     end
 
     if Gem.win_platform?
-      uninstall_puppet_windows
+      uninstall_masterless_puppet_windows
     else
-      uninstall_puppet_linux
+      uninstall_masterless_puppet_linux
     end
   end
 end

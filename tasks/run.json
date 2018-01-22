@@ -19,7 +19,7 @@
             "description": "clean up module post execution?",
             "type": "Optional[Enum[yes, no]]"
         },
-        "install_puppet": {
+        "install_masterless_puppet": {
             "description": "install puppet agent [bolt only]",
             "type": "Optional[Enum[yes, no]]"
         }
