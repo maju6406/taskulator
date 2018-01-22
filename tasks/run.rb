@@ -188,6 +188,11 @@ begin
     end
   end
 
+  if module_names.instance_of?(String)
+    puts 'module_name is a string'
+    module_names = module_names.split
+  end
+
   module_names.each do |module_name|
     begin
       install_module(module_name)
