@@ -20,7 +20,7 @@
             "type": "Optional[Enum[yes, no]]"
         },
         "install_masterless_puppet": {
-            "description": "install puppet agent [bolt only]",
+            "description": "install puppet agent. Requires ruby to be pre-installed [bolt only]",
             "type": "Optional[Enum[yes, no]]"
         }
     }

@@ -152,9 +152,9 @@ def linux_variant
     r[:family] = 'RedHat' if r[:family].nil?
     r[:distro] = 'CentOS' if File.exist?('/etc/centos-release')
     version = `cat /etc/redhat-release`
-    if version =~ '/release 7/'
+    if version =~ %r{/release 7/}
       r[:major_version] = '7'
-    elsif version =~ '/release 6/'
+    elsif version =~ %r{/release 6/}
       r[:major_version] = '6'
     end
   end
