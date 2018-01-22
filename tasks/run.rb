@@ -36,41 +36,44 @@ end
 def install_masterless_puppet_linux
   os = linux_variant
   agent_version = '5.3.2'
-  return if File.exist?('/opt/puppetlabs/puppet/bin/puppet')
-  if os[:family] == 'RedHat'
-    os_version = os[:major_version]
-    cmd = <<-CMD
-            rpm -Uvh https://yum.puppet.com/puppet5/puppet5-release-el-#{os_version}.noarch.rpm && \
-            yum upgrade -y && \
-            yum update -y && \
-            yum install -y puppet-agent-#{agent_version} && \
-            mkdir -p /etc/puppetlabs/facter/facts.d/ && \
-            yum clean all
-          CMD
+  if File.exist?('/opt/puppetlabs/puppet/bin/puppet')
+    puts 'Puppet already exists on machine. Skipping install'
   else
-    os_codename = os[:codename]
-    cmd = <<-CMD
-            apt-get update && \
-            apt-get install --no-install-recommends -y lsb-release wget ca-certificates && \
-            wget https://apt.puppetlabs.com/puppet5-release-#{os_codename}.deb && \
-            dpkg -i puppet5-release-#{os_codename}.deb  && \
-            rm puppet5-release-#{os_codename}.deb  && \
-            apt-get update && \
-            apt-get install --no-install-recommends -y puppet-agent="#{agent_version}"-1"#{os_codename}" && \
-            apt-get remove --purge -y wget && \
-            apt-get autoremove -y && \
-            apt-get clean && \
-            mkdir -p /etc/puppetlabs/facter/facts.d/ && \
-            rm -rf /var/lib/apt/lists/*
-          CMD
-  end
+    if os[:family] == 'RedHat'
+      os_version = os[:major_version]
+      cmd = <<-CMD
+              rpm -Uvh https://yum.puppet.com/puppet5/puppet5-release-el-#{os_version}.noarch.rpm && \
+              yum upgrade -y && \
+              yum update -y && \
+              yum install -y puppet-agent-#{agent_version} && \
+              mkdir -p /etc/puppetlabs/facter/facts.d/ && \
+              yum clean all
+            CMD
+    elsif os[:family] == 'Debian'
+      os_codename = os[:codename]
+      cmd = <<-CMD
+              apt-get update && \
+              apt-get install --no-install-recommends -y lsb-release wget ca-certificates && \
+              wget https://apt.puppetlabs.com/puppet5-release-#{os_codename}.deb && \
+              dpkg -i puppet5-release-#{os_codename}.deb  && \
+              rm puppet5-release-#{os_codename}.deb  && \
+              apt-get update && \
+              apt-get install --no-install-recommends -y puppet-agent="#{agent_version}"-1"#{os_codename}" && \
+              apt-get remove --purge -y wget && \
+              apt-get autoremove -y && \
+              apt-get clean && \
+              mkdir -p /etc/puppetlabs/facter/facts.d/ && \
+              rm -rf /var/lib/apt/lists/*
+            CMD
+    end
 
-  if cmd.nil?
-    puts 'Could not install puppet. Exiting'
-    exit 3
-  end
+    if cmd.nil?
+      puts 'Could not install puppet. Exiting'
+      exit 2
+    end
 
-  exec(cmd)
+    exec(cmd)
+  end
 end
 
 def uninstall_masterless_puppet_linux
@@ -152,12 +155,13 @@ def linux_variant
     r[:family] = 'RedHat' if r[:family].nil?
     r[:distro] = 'CentOS' if File.exist?('/etc/centos-release')
     version = `cat /etc/redhat-release`
-    if version =~ %r{/release 7/}
+    if version.include? "release 7"
       r[:major_version] = '7'
-    elsif version =~ %r{/release 6/}
+    elsif version.include? "release 7"
       r[:major_version] = '6'
     end
   end
+  puts r
   r
 end
 
@@ -169,28 +173,23 @@ puppet_code_url = params['puppet_code_url']
 install_masterless_puppet = params['install_masterless_puppet']
 
 begin
+  puts "names:               #{module_names}"
+  puts "postinstall_cleanup: #{postinstall_cleanup}"
+  puts "log file:            #{Dir.tmpdir}#{File::SEPARATOR}taskulator.log"
+  puts "puppet_code_url:     #{puppet_code_url}"
+  puts "install_puppet:      #{install_masterless_puppet}"
+
   if puppet_code_url.to_s.empty? && puppet_code.to_s.empty?
     puts 'You must specify either puppet_code_url OR puppet_code parameter for this task to function. Try again.'
     exit 1
   end
 
-  puts "names:               #{module_names}"
-  puts "postinstall_cleanup: #{postinstall_cleanup}"
-  puts "log file:            #{Dir.tmpdir}#{File::SEPARATOR}taskulator.log"
-  puts "puppet_code_url:     #{puppet_code_url}"
-  puts "install_masterless_puppet:      #{install_masterless_puppet}"
-
-  unless install_masterless_puppet == 'no'
+  if install_masterless_puppet == 'yes'
     if Gem.win_platform?
       install_masterless_puppet_windows
     else
       install_masterless_puppet_linux
     end
-  end
-
-  if module_names.instance_of?(String)
-    puts 'module_name is a string'
-    module_names = module_names.split
   end
 
   module_names.each do |module_name|
